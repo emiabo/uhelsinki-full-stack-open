@@ -17,22 +17,30 @@ const Feedback = (props) => {
   )
 }
 
-const Display = (props) => {
+const StatisticLine = (props) => {
   return(
     <p>{props.text} {props.value} {props.suffix}</p>
   )
 }
 
 const Statistics = (props) => {
+  if (props.total === 0) {
+    return(
+      <div>
+        <h2>statistics</h2>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
   return(
     <div>
       <h2>statistics</h2>
-      <Display text='good' value={props.good} />
-      <Display text='neutral' value={props.neutral} />
-      <Display text='bad' value={props.bad} />
-      <Display text='all' value={props.total} />
-      <Display text='average' value={props.avg} />
-      <Display text='positive' value={props.percentGood} suffix='%'/>
+      <StatisticLine text='good' value={props.good} />
+      <StatisticLine text='neutral' value={props.neutral} />
+      <StatisticLine text='bad' value={props.bad} />
+      <StatisticLine text='all' value={props.total} />
+      <StatisticLine text='average' value={props.avg} />
+      <StatisticLine text='positive' value={props.percentGood} suffix='%'/>
     </div>
   )
 }
