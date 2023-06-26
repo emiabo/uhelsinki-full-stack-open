@@ -1,5 +1,33 @@
 import { useState } from 'react'
 
+const PersonForm = (props) => {
+  return (
+    <form onSubmit={props.addPerson}>
+      <div>name: <input value={props.newName} onChange={props.handleNameInput} /></div>
+      <div>number: <input value={props.newNum} onChange={props.handleNumInput} /></div>
+      <div><button type="submit">add</button></div>
+    </form>
+  )
+}
+
+const Person = (props) => {
+  return(
+    <>
+      <p key={props.person.name}>{props.person.name} {props.person.number}</p>
+    </>
+  )
+}
+
+const Persons = (props) => {
+  return (
+    <>
+      {props.persons.map(person => 
+        <Person key={person.name} person={person} />
+      )}
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     {
@@ -30,15 +58,9 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>name: <input value={newName} onChange={handleNameInput} /></div>
-        <div>number: <input value={newNum} onChange={handleNumInput} /></div>
-        <div><button type="submit">add</button></div>
-      </form>
+      <PersonForm addPerson={addPerson} handleNameInput={handleNameInput} handleNumInput={handleNumInput} newName={newName} newNum={newNum} />
       <h2>Numbers</h2>
-      {persons.map(person => 
-        <p key={person.name}>{person.name} {person.number}</p>
-      )}
+      <Persons persons={persons} />
     </div>
   )
 }
