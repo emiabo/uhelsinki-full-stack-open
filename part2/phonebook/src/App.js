@@ -12,8 +12,11 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    console.log('Even triggered on element: ', event.target)
-    setPersons(persons.concat({ name: newName }))
+    if (persons.some(person => person.name == newName)) {
+      alert(`${newName} is already added to phonebook`)
+    } else {
+      setPersons(persons.concat({ name: newName }))
+    }
   }
 
   return (
