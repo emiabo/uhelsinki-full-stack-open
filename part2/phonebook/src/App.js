@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 const PersonForm = (props) => {
   return (
@@ -29,14 +30,19 @@ const Persons = (props) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    {
-      name: 'Arto Hellas',
-      number: '040-1234567'
-    }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
+
+  useEffect(() => {
+    console.log('Running effect...')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('Promise complete!')
+        setPersons(response.data)
+      })
+  }, [])
 
   const handleNameInput = (event) => {
     setNewName(event.target.value)
@@ -48,7 +54,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.some(person => person.name == newName)) {
+    if (persons.some(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
       setPersons(persons.concat({ name: newName, number: newNum }))
