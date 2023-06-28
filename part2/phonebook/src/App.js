@@ -13,9 +13,10 @@ const PersonForm = (props) => {
 
 const Person = (props) => {
   return(
-    <>
-      <p key={props.person.name}>{props.person.name} {props.person.number}</p>
-    </>
+    <div key={props.person.name}>
+      {props.person.name} {props.person.number}
+      <button onClick={props.deletePerson}>Delete</button>
+    </div>
   )
 }
 
@@ -23,7 +24,11 @@ const Persons = (props) => {
   return (
     <>
       {props.persons.map(person => 
-        <Person key={person.name} person={person} />
+        <Person 
+          key={person.name} 
+          person={person} 
+          deletePerson={() => props.deletePerson(person.id)} 
+        />
       )}
     </>
   )
@@ -70,12 +75,23 @@ const App = () => {
     }
   }
 
+  const deletePerson = (id) => {
+    personService
+      .del(id)
+      .then(response => {
+        setPersons(persons.filter(p => p.id !== id))
+      })
+      .catch(error => {
+        alert(`Person with id ${id} not found (could already be deleted).`)
+      })
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
       <PersonForm addPerson={addPerson} handleNameInput={handleNameInput} handleNumInput={handleNumInput} newName={newName} newNum={newNum} />
       <h2>Numbers</h2>
-      <Persons persons={persons} />
+      <Persons persons={persons} deletePerson={deletePerson} />
     </div>
   )
 }
