@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
+import './index.css'
 
 const PersonForm = (props) => {
   return (
@@ -34,10 +35,23 @@ const Persons = (props) => {
   )
 }
 
+const Alert = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='alert'>
+      {message}
+    </div>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
+  const [alertMessage, setAlertMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -66,6 +80,8 @@ const App = () => {
         personService
           .update(changedPerson.id, changedPerson)
           .then(returnedPerson => {
+            setAlertMessage(`Updated ${returnedPerson.name}`)
+            setTimeout(() => {setAlertMessage(null)}, 5000)
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
           })
       }
@@ -78,6 +94,8 @@ const App = () => {
       personService
         .create(personObject)
         .then(returnedPerson => {
+          setAlertMessage(`Added ${returnedPerson.name}`)
+          setTimeout(() => {setAlertMessage(null)}, 5000)
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNum('')
@@ -98,6 +116,7 @@ const App = () => {
 
   return (
     <div>
+      <Alert message={alertMessage} />
       <h2>Phonebook</h2>
       <PersonForm addPerson={addPerson} handleNameInput={handleNameInput} handleNumInput={handleNumInput} newName={newName} newNum={newNum} />
       <h2>Numbers</h2>
