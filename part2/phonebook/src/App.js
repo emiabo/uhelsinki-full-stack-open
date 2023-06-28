@@ -2,49 +2,55 @@ import { useState, useEffect } from 'react'
 import personService from './services/persons'
 import './index.css'
 
-const PersonForm = (props) => {
+const PersonForm = ({ addPerson, handleNameInput, handleNumInput, newName, newNum }) => {
   return (
-    <form onSubmit={props.addPerson}>
-      <div>name: <input value={props.newName} onChange={props.handleNameInput} /></div>
-      <div>number: <input value={props.newNum} onChange={props.handleNumInput} /></div>
+    <form onSubmit={addPerson}>
+      <div>name: <input value={newName} onChange={handleNameInput} /></div>
+      <div>number: <input value={newNum} onChange={handleNumInput} /></div>
       <div><button type="submit">add</button></div>
     </form>
   )
 }
 
-const Person = (props) => {
+const Person = ({ person, deletePerson }) => {
   return(
-    <div key={props.person.name}>
-      {props.person.name} {props.person.number}
-      <button onClick={props.deletePerson}>Delete</button>
+    <div key={person.name}>
+      {person.name} {person.number}
+      <button onClick={deletePerson}>Delete</button>
     </div>
   )
 }
 
-const Persons = (props) => {
+const Persons = ({ persons, deletePerson }) => {
   return (
     <>
-      {props.persons.map(person => 
+      {persons.map(person => 
         <Person 
           key={person.name} 
           person={person} 
-          deletePerson={() => props.deletePerson(person.id)} 
+          deletePerson={() => deletePerson(person.id)} 
         />
       )}
     </>
   )
 }
 
-const Alert = ({ message }) => {
+const Alert = ({ message, alertIsError }) => {
   if (message === null) {
     return null
+  } else if (alertIsError) {
+    return (
+      <div className='alert error'>
+        {message}
+      </div>
+    )
+  } else {
+    return (
+      <div className='alert'>
+        {message}
+      </div>
+    )
   }
-
-  return (
-    <div className='alert'>
-      {message}
-    </div>
-  )
 }
 
 const App = () => {
@@ -52,6 +58,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNum, setNewNum] = useState('')
   const [alertMessage, setAlertMessage] = useState(null)
+  const [alertIsError, setAlertIsError] = useState(false)
 
   useEffect(() => {
     personService
@@ -83,6 +90,19 @@ const App = () => {
             setAlertMessage(`Updated ${returnedPerson.name}`)
             setTimeout(() => {setAlertMessage(null)}, 5000)
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
+            setNewName('')
+            setNewNum('')
+          })
+          .catch(error => {
+            setAlertMessage(`Information of ${changedPerson.name} has already been removed from server`)
+            setAlertIsError(true)
+            setTimeout(() => {
+              setAlertMessage(null)
+              setAlertIsError(false)
+            }, 5000)
+            setPersons(persons.filter(person => person.id !== changedPerson.id))
+            setNewName('')
+            setNewNum('')
           })
       }
     } else {
@@ -116,7 +136,7 @@ const App = () => {
 
   return (
     <div>
-      <Alert message={alertMessage} />
+      <Alert message={alertMessage} alertIsError={alertIsError} />
       <h2>Phonebook</h2>
       <PersonForm addPerson={addPerson} handleNameInput={handleNameInput} handleNumInput={handleNumInput} newName={newName} newNum={newNum} />
       <h2>Numbers</h2>

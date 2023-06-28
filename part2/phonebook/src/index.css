@@ -7,4 +7,8 @@
     border-radius: 40px;
     padding: 10px 20px;
     margin-bottom: 10px;
-  }
+}
+
+.error {
+    color: red;
+}
