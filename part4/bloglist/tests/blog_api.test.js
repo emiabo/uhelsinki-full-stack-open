@@ -48,11 +48,11 @@ describe('get all blogs', () => {
 
 describe('post a new blog', () => {
     const newBlog = {
-            title: "This One's New",
-	        author: "novella",
-	        url: "https://outer.space",
-	        likes: 39
-        }
+        title: "This One's New",
+	    author: "novella",
+	    url: "https://outer.space",
+	    likes: 39
+    }
 
     test('total increases by one', async () => {
         const testPost = await api.post('/api/blogs').send(newBlog)
@@ -66,6 +66,22 @@ describe('post a new blog', () => {
         expect(response.body.author).toBe(newBlog.author)
         expect(response.body.url).toBe(newBlog.url)
         expect(response.body.likes).toBe(newBlog.likes)
+    })
+
+    test('if missing likes: likes = 0', async () => {
+        delete newBlog.likes // this affects all tests using newBlog after this point. consider just defining a new test object
+        const response = await api.post('/api/blogs').send(newBlog)
+        expect(response.body.likes).toBe(0)
+    })
+
+    test('if missing title or url: status code 400', async () => {
+        console.log(newBlog)
+        delete newBlog.title
+        delete newBlog.url
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
     })
 })
 
