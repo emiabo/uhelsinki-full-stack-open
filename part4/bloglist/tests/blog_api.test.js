@@ -46,6 +46,29 @@ describe('get all blogs', () => {
     })
 })
 
+describe('post a new blog', () => {
+    const newBlog = {
+            title: "This One's New",
+	        author: "novella",
+	        url: "https://outer.space",
+	        likes: 39
+        }
+
+    test('total increases by one', async () => {
+        const testPost = await api.post('/api/blogs').send(newBlog)
+        const response = await api.get('/api/blogs')
+        expect(response.body).toHaveLength(initialBlogs.length + 1)
+    })
+
+    test('correct data was returned from post (should be saved)', async () => {
+        const response = await api.post('/api/blogs').send(newBlog)
+        expect(response.body.title).toBe(newBlog.title)
+        expect(response.body.author).toBe(newBlog.author)
+        expect(response.body.url).toBe(newBlog.url)
+        expect(response.body.likes).toBe(newBlog.likes)
+    })
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
