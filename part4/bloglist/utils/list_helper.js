@@ -3,14 +3,21 @@ const dummy = (blogs) => {
 }
 
 const totalLikes = (blogs) => {
-    const addUp = (sum, item) => {
-        return sum + item.likes
-    }
+  const addUp = (sum, item) => {
+    return sum + item.likes
+  }
 
-    return blogs.reduce(addUp, 0)
+  return blogs.reduce(addUp, 0)
+}
+
+const favoriteBlog = (blogs) => {
+  const blogLikes = blogs.map(blog => blog.likes)
+  const mostLikes = Math.max(...blogLikes)
+  return blogs.find(blog => blog.likes === mostLikes)
 }
 
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog
 }
