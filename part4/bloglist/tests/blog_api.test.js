@@ -39,6 +39,11 @@ describe('get all blogs', () => {
         const response = await api.get('/api/blogs')
         expect(response.body).toHaveLength(initialBlogs.length)
     })
+
+    test('items have id', async () => {
+        const response = await api.get('/api/blogs')
+        expect(response.body[0].id).toBeDefined()
+    })
 })
 
 afterAll(async () => {
